@@ -46,7 +46,6 @@ export default function SudokuApp() {
     <main>
       <h1>Sudoku Solver</h1>
       <Board grid={grid} selected={selected} onSelect={setSelected} />
-      <p>Click a cell, type 1–9. Backspace/Delete clears.</p>
     </main>
   );
 }
