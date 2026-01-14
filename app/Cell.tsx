@@ -1,4 +1,4 @@
-import type { CellValue } from "./SudokuApp";
+import type { CellValue } from "@engine/types";
 
 export default function Cell(props: {
   value: CellValue;
