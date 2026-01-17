@@ -5,5 +5,12 @@ type Props = {
 };
 
 export default function SolveButton({ onSolve }: Props) {
-  return <button onClick={onSolve}>Solve</button>
+  return (
+    <button
+      className="button"
+      onClick={onSolve}
+    >
+      Solve
+    </button>
+  );
 }

@@ -112,8 +112,10 @@ export default function SudokuApp() {
     <main>
       <h1>Sudoku Solver</h1>
       <Board board={board} selected={selected} onSelect={setSelected} />
-      <ResetButton onReset={handleReset} />
-      <SolveButton onSolve={handleSolve} />
+      <div className="button-container">
+        <ResetButton onReset={handleReset} />
+        <SolveButton onSolve={handleSolve} />
+      </div>
     </main>
   );
 }

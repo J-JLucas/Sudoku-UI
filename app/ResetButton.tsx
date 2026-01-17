@@ -5,5 +5,12 @@ type Props = {
 };
 
 export default function ResetButton({ onReset }: Props) {
-  return <button onClick={onReset}>Reset</button>
+  return (
+    <button
+      className="button"
+      onClick={onReset}
+    >
+      Reset
+    </button>
+  );
 }
