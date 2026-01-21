@@ -4,11 +4,12 @@ export default function Cell(props: {
   value: CellValue;
   selected: boolean;
   fixed: boolean;
+  disabled: boolean;
   onClick: () => void;
   onFocus: () => void;
 }) {
 
-  const { value, selected, fixed, onClick, onFocus } = props;
+  const { value, selected, fixed, disabled, onClick, onFocus } = props;
 
   const classNames = ["cell"];
   if (selected) classNames.push("cell--selected");
@@ -20,6 +21,7 @@ export default function Cell(props: {
       className={classNames.join(" ")}
       onClick={onClick}
       onFocus={onFocus}
+      disabled={disabled}
     >
       {value ?? ""}
     </button>

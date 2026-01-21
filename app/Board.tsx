@@ -9,8 +9,9 @@ export default function Board(props: {
   selected: Pos | null;
   onSelect: (pos: Pos | null) => void;
   fixedCells: boolean[][];
+  disabled: boolean;
 }) {
-  const { board, selected, onSelect, fixedCells } = props;
+  const { board, selected, onSelect, fixedCells, disabled } = props;
 
   return (
     <div className="board" role="grid" aria-label="Sudoku board">
@@ -25,6 +26,7 @@ export default function Board(props: {
               value={value}
               selected={isSelected}
               fixed={fixedCells[r][c]}
+              disabled={disabled}
               onClick={() => onSelect({ r, c })}
               onFocus={() => onSelect({ r, c })}
             />

@@ -27,6 +27,7 @@ const DEFAULT_BOARD: CellValue[][] = [
 
 export default function SudokuApp() {
   const [board, setBoard] = useState(() => new SudokuBoard(DEFAULT_BOARD));
+  const [isSolved, setIsSolved] = useState(false);
   const [selected, setSelected] = useState<Pos | null>(null);
   const [fixedCells, setFixedCells] = useState<boolean[][]>(
     () => DEFAULT_BOARD.map(row => row.map(cell => cell !== null))
@@ -36,18 +37,19 @@ export default function SudokuApp() {
     setBoard(new SudokuBoard());
     setFixedCells(Array.from({ length: 9 }, () => Array(9).fill(false)));
     setSelected(null);
+    setIsSolved(false);
   };
 
   const handleSolve = () => {
-    setBoard(prev => {
-      const next = prev.clone();
-      SudokuSolver.solve(next);
-      return next;
-    });
+    const next = board.clone();
+    const success = SudokuSolver.solve(next);
+    setBoard(next);
+    setIsSolved(success);
   };
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (isSolved) return;  //block input once solved
 
       if (!selected) {
         if (e.key === "ArrowUp" || e.key === "ArrowDown" ||
@@ -132,6 +134,7 @@ export default function SudokuApp() {
         selected={selected}
         onSelect={setSelected}
         fixedCells={fixedCells}
+        disabled={isSolved}
       />
       <div className="button-container">
         <ResetButton onReset={handleReset} />
