@@ -28,9 +28,13 @@ const DEFAULT_BOARD: CellValue[][] = [
 export default function SudokuApp() {
   const [board, setBoard] = useState(() => new SudokuBoard(DEFAULT_BOARD));
   const [selected, setSelected] = useState<Pos | null>(null);
+  const [fixedCells, setFixedCells] = useState<boolean[][]>(
+    () => DEFAULT_BOARD.map(row => row.map(cell => cell !== null))
+  );
 
   const handleReset = () => {
     setBoard(new SudokuBoard());
+    setFixedCells(Array.from({ length: 9 }, () => Array(9).fill(false)));
     setSelected(null);
   };
 
@@ -88,6 +92,13 @@ export default function SudokuApp() {
           next.setCell(v, selected.r, selected.c);
           return next;
         });
+
+        setFixedCells(prev => {
+          const next = prev.map(row => [...row]);
+          next[selected.r][selected.c] = true;
+          return next;
+        });
+
         return;
       }
 
@@ -98,6 +109,11 @@ export default function SudokuApp() {
         setBoard(prev => {
           const next = prev.clone();
           next.setCell(null, selected.r, selected.c);
+          return next;
+        });
+        setFixedCells(prev => {
+          const next = prev.map(row => [...row]);
+          next[selected.r][selected.c] = false;
           return next;
         });
         return;
@@ -111,7 +127,12 @@ export default function SudokuApp() {
   return (
     <main>
       <h1>Sudoku Solver</h1>
-      <Board board={board} selected={selected} onSelect={setSelected} />
+      <Board
+        board={board}
+        selected={selected}
+        onSelect={setSelected}
+        fixedCells={fixedCells}
+      />
       <div className="button-container">
         <ResetButton onReset={handleReset} />
         <SolveButton onSolve={handleSolve} />
