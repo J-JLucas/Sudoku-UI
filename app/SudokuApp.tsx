@@ -28,6 +28,7 @@ const DEFAULT_BOARD: CellValue[][] = [
 export default function SudokuApp() {
   const [board, setBoard] = useState(() => new SudokuBoard(DEFAULT_BOARD));
   const [isSolved, setIsSolved] = useState(false);
+  const [unsolvable, setUnsolvable] = useState(false);
   const [selected, setSelected] = useState<Pos | null>(null);
   const [fixedCells, setFixedCells] = useState<boolean[][]>(
     () => DEFAULT_BOARD.map(row => row.map(cell => cell !== null))
@@ -38,13 +39,20 @@ export default function SudokuApp() {
     setFixedCells(Array.from({ length: 9 }, () => Array(9).fill(false)));
     setSelected(null);
     setIsSolved(false);
+    setUnsolvable(false);
   };
 
   const handleSolve = () => {
     const next = board.clone();
     const success = SudokuSolver.solve(next);
-    setBoard(next);
-    setIsSolved(success);
+    if (success) {
+      setBoard(next);
+      setIsSolved(true);
+      setUnsolvable(false);
+    }
+    else {
+      setUnsolvable(true);
+    }
   };
 
   useEffect(() => {
@@ -136,6 +144,7 @@ export default function SudokuApp() {
         fixedCells={fixedCells}
         disabled={isSolved}
       />
+      {unsolvable && <p className="error">This puzzle input is unsolvable!</p>}
       <div className="button-container">
         <ResetButton onReset={handleReset} />
         <SolveButton onSolve={handleSolve} />
