@@ -151,15 +151,14 @@ h1 {
   transform: translateY(0);
 }
 
-/* Make the Solve button dark/prominent */
-.button:last-child {
-  background-color: #111827;
-  color: white;
-  border-color: #111827;
+.button--primary {
+  background-color: #111827 !important;
+  color: white !important;
+  border-color: #111827 !important;
 }
 
-.button:last-child:hover {
-  background-color: #000000;
+.button--primary:hover {
+  background-color: #000000 !important;
 }
 
 /* --- ERROR MESSAGE --- */

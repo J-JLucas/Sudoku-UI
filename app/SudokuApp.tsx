@@ -1,10 +1,8 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Board from "./Board";
-import ResetButton from "./ResetButton";
-import SolveButton from "./SolveButton";
-
+import Button from "./Button";
 
 import type { CellValue } from "@engine/types";
 import { SudokuBoard } from "@engine/SudokuBoard";
@@ -24,10 +22,8 @@ const DEFAULT_BOARD: CellValue[][] = [
   [null, null, null, null, 8, null, null, 7, 9],
 ];
 
-
 export default function SudokuApp() {
   const [board, setBoard] = useState(() => new SudokuBoard(DEFAULT_BOARD));
-  const [isSolved, setIsSolved] = useState(false);
   const [unsolvable, setUnsolvable] = useState(false);
   const [selected, setSelected] = useState<Pos | null>(null);
   const [fixedCells, setFixedCells] = useState<boolean[][]>(
@@ -38,7 +34,6 @@ export default function SudokuApp() {
     setBoard(new SudokuBoard());
     setFixedCells(Array.from({ length: 9 }, () => Array(9).fill(false)));
     setSelected(null);
-    setIsSolved(false);
     setUnsolvable(false);
   };
 
@@ -47,21 +42,17 @@ export default function SudokuApp() {
     const success = SudokuSolver.solve(next);
     if (success) {
       setBoard(next);
-      setIsSolved(true);
       setUnsolvable(false);
-    }
-    else {
+    } else {
       setUnsolvable(true);
     }
   };
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (isSolved) return;  //block input once solved
-
+      // Navigation works regardless of board state
       if (!selected) {
-        if (e.key === "ArrowUp" || e.key === "ArrowDown" ||
-          e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        if (e.key.startsWith("Arrow")) {
           e.preventDefault();
           setSelected({ r: 0, c: 0 });
         }
@@ -71,31 +62,27 @@ export default function SudokuApp() {
       // Arrow key navigation
       if (e.key.startsWith("Arrow")) {
         e.preventDefault();
-
         let { r, c } = selected;
-
         switch (e.key) {
           case "ArrowUp": r -= 1; break;
           case "ArrowDown": r += 1; break;
           case "ArrowLeft": c -= 1; break;
           case "ArrowRight": c += 1; break;
         }
-
-        // clamp to board
         r = Math.max(0, Math.min(8, r));
         c = Math.max(0, Math.min(8, c));
-
-        // only update if it actually changed
         if (r !== selected.r || c !== selected.c) {
           setSelected({ r, c });
         }
         return;
       }
 
-      // Fill Cell
+      // Fill Cell (1-9)
       if (e.key >= "1" && e.key <= "9") {
         e.preventDefault();
         const v = Number(e.key) as CellValue;
+
+        setUnsolvable(false);
 
         setBoard(prev => {
           const next = prev.clone();
@@ -108,13 +95,14 @@ export default function SudokuApp() {
           next[selected.r][selected.c] = true;
           return next;
         });
-
         return;
       }
 
-      // Clear Cell
+      // Clear Cell (Backspace, Delete, or 0)
       if (e.key === "Backspace" || e.key === "Delete" || e.key === "0") {
         e.preventDefault();
+
+        setUnsolvable(false);
 
         setBoard(prev => {
           const next = prev.clone();
@@ -142,12 +130,12 @@ export default function SudokuApp() {
         selected={selected}
         onSelect={setSelected}
         fixedCells={fixedCells}
-        disabled={isSolved}
+        disabled={false} // Always editable
       />
       {unsolvable && <p className="error">This puzzle input is unsolvable!</p>}
       <div className="button-container">
-        <ResetButton onReset={handleReset} />
-        <SolveButton onSolve={handleSolve} />
+        <Button label="Reset" onClick={handleReset} />
+        <Button label="Solve" onClick={handleSolve} variant="primary" />
       </div>
     </main>
   );
