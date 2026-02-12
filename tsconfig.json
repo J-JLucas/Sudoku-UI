@@ -24,7 +24,7 @@
     ],
     "paths": {
       "@engine/*": [
-        "./lib/sudoku-engine/src/*"
+        "lib/sudoku-engine/src/*"
       ]
     }
   },
